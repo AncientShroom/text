@@ -1,0 +1,62 @@
+var bk = createSprite(200, 200,50,50);
+bk.setAnimation("bk");
+
+var paddle1 = createSprite(50, 390,70,10);
+var paddle2 = createSprite(350, 390,70,10);
+paddle1.shapeColor="red";
+paddle2.shapeColor="blue";
+
+var ball1 = createSprite(50, 370,15,15);
+var ball2 = createSprite(350, 370,15,15);
+ball1.setAnimation("ball1");
+ball2.setAnimation("ball2");
+ball1.scale=0.06;
+ball2.scale=0.06;
+
+createEdgeSprites();
+ball1.setVelocity(4,5);
+ball2.setVelocity(-4,-5);
+var bricks = createGroup();
+function createBrickRow(y, color) {
+  for(var c=0; c<12; c++)
+  {
+    var brick = createSprite(23+32*c,y,30, 25);
+    brick.shapeColor = color;
+   bricks.add(brick);
+  }
+}
+
+createBrickRow(65, "red");
+createBrickRow(65+29, "orange");
+createBrickRow(65+29+29, "green");
+createBrickRow(65+29+29+29, "yellow");
+createBrickRow(65+29+29+29+29, "blue");
+createBrickRow(65+29+29+29+29+29, "purple");
+
+function draw() {
+  paddle2.x=World.mouseX;
+  
+  if(paddle2.x<35){
+    paddle2.x=35;
+  }
+  if(paddle2.x>365){
+    paddle2.x=365;
+  }
+   
+  
+  paddle1.x=ball2.x;
+  paddle1.x=ball1.x;
+ 
+  ball1.bounceOff(paddle1);
+
+  ball2.bounceOff(paddle2);
+
+  ball1.bounceOff(edges);
+  ball2.bounceOff(edges);
+  brickHit();
+  drawSprites();
+  
+}
+function brickHit(ball1, brick) {
+ brick.remove();
+}
