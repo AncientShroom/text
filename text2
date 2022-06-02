@@ -1,0 +1,152 @@
+var gameState=0
+var bk = createSprite(200, 200,50,50);
+bk.setAnimation("bk");
+var head= createSprite(30,22,200,200)
+var head1= createSprite(264,20,200,200)
+head.setAnimation("red");
+head1.setAnimation("blue");
+head.scale=0.2
+head1.scale=0.2
+
+var paddle1 = createSprite(50, 360,70,10);
+paddle1.setAnimation("paddle1")
+paddle1.scale=0.5
+var paddle2 = createSprite(350, 360,70,10);
+paddle2.setAnimation("paddle2")
+paddle2.scale=0.5
+paddle1.shapeColor="red";
+paddle2.shapeColor="blue";
+
+var ball1 = createSprite(50, 370,15,15);
+var ball2 = createSprite(350, 370,15,15);
+ball1.setAnimation("ball1");
+ball2.setAnimation("ball2");
+ball1.scale=0.06;
+ball2.scale=0.06;
+
+createEdgeSprites();
+ball1.setVelocity(2,-3);
+ball2.setVelocity(-3,-2);
+var bricks = createGroup();
+var score1=0;
+var score2=0;
+function createBrickRow(y, color) {
+  for(var c=0; c<12; c++)
+  {
+    var brick = createSprite(23+32*c,y,30, 25);
+    brick.shapeColor = color;
+   bricks.add(brick);
+   
+  }
+}
+
+createBrickRow(65, "red");
+createBrickRow(65+29, "orange");
+createBrickRow(65+29+29, "green");
+createBrickRow(65+29+29+29, "yellow");
+createBrickRow(65+29+29+29+29, "blue");
+createBrickRow(65+29+29+29+29+29, "purple");
+ball1.visible=true;
+   paddle1.visible=true;
+   paddle2.visible=true
+function draw() {
+  paddle2.x=World.mouseX;
+  
+  if(paddle2.x<35){
+    paddle2.x=35;
+  }
+  if(paddle2.x>365){
+    paddle2.x=365;
+  }
+   
+   
+  
+  
+  paddle1.x=ball1.x;
+ 
+  ball1.bounceOff(paddle1);
+
+  ball2.bounceOff(paddle2);
+
+  ball1.bounceOff(rightEdge);
+  ball1.bounceOff(leftEdge);
+  ball1.bounceOff(topEdge);
+  ball2.bounceOff(rightEdge);
+  ball2.bounceOff(leftEdge);
+  ball2.bounceOff(topEdge);
+ ball1.bounceOff(bricks,brickHit1);
+ ball2.bounceOff(bricks,brickHit2);
+   drawSprites();
+   if(ball2.overlap(bottomEdge)){
+   gameState=2
+    GameOver();
+    GS2();
+  }
+  textSize(22);
+  fill("red");
+  
+  text("Player 1:"+score1, 280, 30);
+  fill("blue");
+  
+  text("Player 2:"+score2, 40, 30);
+}
+function brickHit1(ball1, brick) {
+ brick.remove();
+ score1=score1+1;
+ playSound("sound://category_digital/bounce_2.mp3", false);
+ if(ball1.velocityY<=12 && ball1.velocityY>=-12){
+     ball1.velocityX*=1.05
+     ball1.velocityY*=1.05
+   }
+}
+  function brickHit2(ball2, brick) {
+ brick.remove();
+ score2=score2+1;
+  playSound("sound://category_digital/bounce_2.mp3", false);
+ if(ball2.velocityY<=12 && ball2.velocityY>=-12){
+      ball2.velocityX*=1.05
+     ball2.velocityY*=1.05
+ 
+ }
+}
+ function GameOver(){
+   ball1.setVelocity(0,0)
+   bricks.destroyEach();
+   ball1.visible=false;
+   paddle1.visible=false;
+   paddle2.visible=false
+ }
+ 
+function GS2() {
+  textSize(40);
+   fill("black");
+   text("Game Over", 100, 200);
+}
+function WIN(){
+  if(score2>score1){
+    ball1.visible=false;
+    ball2.visible=false;
+   paddle1.visible=false;
+   paddle2.visible=false
+   ball1.setVelocity(0,0)
+   ball2.setVelocity(0,0)
+   textSize(40);
+   fill("black");
+   text("You Win!", 100, 200);
+  }
+  function LOSE(){
+  if(score1>score2){
+   
+  
+   ball1.setVelocity(0,0)
+   bricks.destroyEach();
+   ball1.visible=false;
+   paddle1.visible=false;
+   paddle2.visible=false
+   textSize(40);
+   fill("black");
+   text("Game Over", 100, 200);
+  }
+   
+  }
+}
